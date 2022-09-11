@@ -6,7 +6,7 @@
 
     <groupId>io.github.soniccloudorg</groupId>
     <artifactId>sonic-vision-core</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 
     <name>sonic-vision-core</name>
     <description>The Sonic Project Vision Core By OpenCV.</description>
@@ -119,14 +119,24 @@
             <id>deploy</id>
             <build>
                 <plugins>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-deploy-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <configuration>
-                            <classifier>${platform}</classifier>
-                        </configuration>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.2.2</version>
+                        <executions>
+                            <execution>
+                                <id>default-package</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>${platform}</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
