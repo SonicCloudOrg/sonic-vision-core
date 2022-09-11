@@ -126,12 +126,21 @@
                         <version>3.2.2</version>
                         <executions>
                             <execution>
-                                <id>default-package</id>
+                                <id>windows-86</id>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
                                 <configuration>
-                                    <classifier>${platform}</classifier>
+                                    <classifier>windows-86</classifier>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>windows-x86_64</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>windows-x86_64</classifier>
                                 </configuration>
                             </execution>
                         </executions>
