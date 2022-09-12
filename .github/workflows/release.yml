@@ -105,7 +105,8 @@ jobs:
       - name: Publish to Maven Central Repo
         uses: samuelmeuli/action-maven-publish@v1
         with:
-          maven_args: -Dmaven.test.skip=true
+          maven_goals_phases: deploy:deploy-file
+          maven_args: -Dmaven.test.skip=true -Dplatform=windows-x86 -Dfile=target/sonic-vision-core-1.0.3.jar -Dclassifiers=windows-x86 -Durl=https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
           gpg_private_key: ${{ secrets.GPG_SECRET }}
           gpg_passphrase: ${{ secrets.GPG_PASSWORD }}
           nexus_username: ${{ secrets.OSSRH_USER }}
