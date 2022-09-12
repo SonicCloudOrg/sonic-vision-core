@@ -74,42 +74,54 @@
             <version>1.2.83</version>
         </dependency>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv</artifactId>
-            <version>1.5.3</version>
+            <version>1.5.7</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openifx</groupId>
+                    <artifactId>javafx-base</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>openblas</artifactId>
-            <version>0.3.9-1.5.3</version>
+            <version>0.3.19-1.5.7</version>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>opencv</artifactId>
-            <version>4.3.0-1.5.3</version>
+            <version>4.5.5-1.5.7</version>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>ffmpeg</artifactId>
-            <version>4.2.2-1.5.3</version>
+            <version>5.0-1.5.7</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
-            <version>1.5.3</version>
+            <version>1.5.7</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>opencv</artifactId>
-            <version>4.3.0-1.5.3</version>
+            <version>4.5.5-1.5.7</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>openblas</artifactId>
-            <version>0.3.9-1.5.3</version>
+            <version>0.3.19-1.5.7</version>
             <classifier>${platform}</classifier>
         </dependency>
     </dependencies>
@@ -202,5 +214,24 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>google</id>
+            <name>Google Aliyun Mirror</name>
+            <url>https://maven.aliyun.com/nexus/content/repositories/google</url>
+        </repository>
+        <repository>
+            <id>alimaven</id>
+            <name>Maven Aliyun Mirror</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>
