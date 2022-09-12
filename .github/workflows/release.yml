@@ -84,6 +84,9 @@ jobs:
 
   release:
 #    needs: [ doc,test ]
+    strategy:
+      matrix:
+        platform: [ windows-x86,windows-x86_64,macosx-x86_64,linux-x86,linux-x86_64 ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -105,8 +108,7 @@ jobs:
       - name: Publish to Maven Central Repo
         uses: samuelmeuli/action-maven-publish@v1
         with:
-          maven_goals_phases: clean package deploy:deploy-file
-          maven_args: -Dmaven.test.skip=true -DgroupId=io.github.soniccloudorg -DartifactId=sonic-vision-core -Dversion=1.0.3 -Dplatform=windows-x86 -Dfile=target/sonic-vision-core-1.0.3.jar -Dclassifiers=windows-x86 -Durl=https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
+          maven_args: -Dmaven.test.skip=true -Dplatform=${{ platform }}
           gpg_private_key: ${{ secrets.GPG_SECRET }}
           gpg_passphrase: ${{ secrets.GPG_PASSWORD }}
           nexus_username: ${{ secrets.OSSRH_USER }}

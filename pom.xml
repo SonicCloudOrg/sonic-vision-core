@@ -6,7 +6,7 @@
 
     <groupId>io.github.soniccloudorg</groupId>
     <artifactId>sonic-vision-core</artifactId>
-    <version>1.0.3</version>
+    <version>SONIC_VERSION-${platform}</version>
 
     <name>sonic-vision-core</name>
     <description>The Sonic Project Vision Core By OpenCV.</description>
@@ -88,37 +88,35 @@
             <artifactId>opencv</artifactId>
             <version>4.3.0-1.5.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>4.2.2-1.5.3</version>
+            <classifier>${platform}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacpp</artifactId>
+            <version>1.5.3</version>
+            <classifier>${platform}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.3.0-1.5.3</version>
+            <classifier>${platform}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>openblas</artifactId>
+            <version>0.3.9-1.5.3</version>
+            <classifier>${platform}</classifier>
+        </dependency>
     </dependencies>
 
     <profiles>
         <profile>
             <id>deploy</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.bytedeco</groupId>
-                    <artifactId>ffmpeg</artifactId>
-                    <version>4.2.2-1.5.3</version>
-                    <classifier>${platform}</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>org.bytedeco</groupId>
-                    <artifactId>javacpp</artifactId>
-                    <version>1.5.3</version>
-                    <classifier>${platform}</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>org.bytedeco</groupId>
-                    <artifactId>opencv</artifactId>
-                    <version>4.3.0-1.5.3</version>
-                    <classifier>${platform}</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>org.bytedeco</groupId>
-                    <artifactId>openblas</artifactId>
-                    <version>0.3.9-1.5.3</version>
-                    <classifier>${platform}</classifier>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
