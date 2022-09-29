@@ -18,7 +18,7 @@ package org.cloud.sonic.vision.cv;
 
 import org.bytedeco.opencv.opencv_core.*;
 import org.bytedeco.opencv.opencv_features2d.FlannBasedMatcher;
-import org.bytedeco.opencv.opencv_xfeatures2d.SIFT;
+import org.bytedeco.opencv.opencv_features2d.SIFT;
 import org.cloud.sonic.vision.models.FindResult;
 import org.cloud.sonic.vision.tool.Logger;
 
