@@ -26,7 +26,6 @@ import org.cloud.sonic.vision.models.FindResult;
 import org.cloud.sonic.vision.tool.Logger;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -38,7 +37,8 @@ import static org.bytedeco.opencv.global.opencv_calib3d.CV_RANSAC;
 import static org.bytedeco.opencv.global.opencv_calib3d.findHomography;
 import static org.bytedeco.opencv.global.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_flann.FLANN_DIST_HAMMING;
-import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.IMREAD_COLOR;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.IMREAD_GRAYSCALE;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import static org.bytedeco.opencv.helper.opencv_imgcodecs.cvLoadImage;
 import static org.bytedeco.opencv.helper.opencv_imgcodecs.cvSaveImage;
@@ -235,15 +235,17 @@ public class AKAZEFinder {
         return new Scalar(b, g, r, 0);
     }
 
-    public FindResult getAKAZEFindResult(File temFile, File beforeFile) throws IOException {
+    public FindResult getAKAZEFindResult(File temFile, File beforeFile, boolean isDelete) {
         IplImage object = cvLoadImage(temFile.getAbsolutePath(), IMREAD_GRAYSCALE);
         IplImage image = cvLoadImage(beforeFile.getAbsolutePath(), IMREAD_GRAYSCALE);
         logger.info("img width：" + image.width());
         logger.info("img height：" + image.height());
         if (object == null || image == null) {
             logger.error("read image failed!");
-            temFile.delete();
-            beforeFile.delete();
+            if (isDelete) {
+                temFile.delete();
+                beforeFile.delete();
+            }
             return null;
         }
 
@@ -337,8 +339,10 @@ public class AKAZEFinder {
         String fileName = "test-output" + File.separator + time + ".jpg";
         cvSaveImage(fileName, correspondColor);
         findResult.setFile(new File(fileName));
-        temFile.delete();
-        beforeFile.delete();
+        if (isDelete) {
+            temFile.delete();
+            beforeFile.delete();
+        }
         return findResult;
     }
 }

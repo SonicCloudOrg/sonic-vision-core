@@ -33,7 +33,7 @@ import static org.bytedeco.opencv.global.opencv_imgproc.*;
 public class TemMatcher {
     private Logger logger = new Logger();
 
-    public FindResult getTemMatchResult(File temFile, File beforeFile) throws IOException {
+    public FindResult getTemMatchResult(File temFile, File beforeFile, boolean isDelete) throws IOException {
         try {
             Mat sourceColor = imread(beforeFile.getAbsolutePath());
             Mat sourceGrey = new Mat(sourceColor.size(), CV_8UC1);
@@ -62,10 +62,13 @@ public class TemMatcher {
             findResult.setX(max.x() + template.cols() / 2);
             findResult.setY(max.y() + template.rows() / 2);
             findResult.setFile(new File(fileName));
+            logger.info(findResult.toString());
             return findResult;
         } finally {
-            temFile.delete();
-            beforeFile.delete();
+            if (isDelete) {
+                temFile.delete();
+                beforeFile.delete();
+            }
         }
     }
 

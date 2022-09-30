@@ -36,7 +36,7 @@ import static org.bytedeco.opencv.global.opencv_imgproc.*;
 public class SIFTFinder {
     private Logger logger = new Logger();
 
-    public FindResult getSIFTFindResult(File temFile, File beforeFile) throws Exception {
+    public FindResult getSIFTFindResult(File temFile, File beforeFile, boolean isDelete) throws Exception {
         Mat image01 = imread(beforeFile.getAbsolutePath());
         Mat image02 = imread(temFile.getAbsolutePath());
 
@@ -102,8 +102,10 @@ public class SIFTFinder {
         String fileName = "test-output" + File.separator + time + ".jpg";
         imwrite(fileName, result);
         findResult.setFile(new File(fileName));
-        temFile.delete();
-        beforeFile.delete();
+        if (isDelete) {
+            temFile.delete();
+            beforeFile.delete();
+        }
         return findResult;
     }
 
