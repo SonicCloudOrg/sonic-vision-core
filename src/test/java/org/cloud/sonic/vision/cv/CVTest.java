@@ -35,6 +35,7 @@ public class CVTest {
     @Test
     public void testSimi() {
         SimilarityChecker similarityChecker = new SimilarityChecker();
+        Assert.assertTrue(similarityChecker.getSimilarMSSIMScore(before, tem, false) > 0);
         Assert.assertTrue(similarityChecker.getSimilarMSSIMScore(before, s, false) > 0);
     }
 }

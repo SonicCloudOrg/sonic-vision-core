@@ -29,21 +29,27 @@ import java.math.RoundingMode;
 import static org.bytedeco.opencv.global.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 import static org.bytedeco.opencv.global.opencv_imgproc.GaussianBlur;
+import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 public class SimilarityChecker {
     private Logger logger = new Logger();
 
     public double getSimilarMSSIMScore(File file1, File file2, Boolean isDelete) {
         Mat i1 = imread(file1.getAbsolutePath());
+        Mat n = new Mat();
         Mat i2 = imread(file2.getAbsolutePath());
-        if (i1.size().get() != i2.size().get()) {
+        Size s = new Size();
+        s.height(i2.arrayHeight());
+        s.width(i2.arrayWidth());
+        resize(i1, n, s);
+        if (n.size().get() != i2.size().get()) {
             return 0;
         }
         double C1 = 6.5025, C2 = 58.5225;
         int d = opencv_core.CV_32F;
         Mat I1 = new Mat();
         Mat I2 = new Mat();
-        i1.convertTo(I1, d);
+        n.convertTo(I1, d);
         i2.convertTo(I2, d);
         Mat I2_2 = I2.mul(I2).asMat();
         Mat I1_2 = I1.mul(I1).asMat();
