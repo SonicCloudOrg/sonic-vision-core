@@ -16,14 +16,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-package org.cloud.sonic.vision.tool;
+package org.cloud.sonic.vision.cv;
 
-public class SonicRespException extends Exception{
-    public SonicRespException(String message) {
-        super(message);
-    }
-
-    public SonicRespException(String message, Throwable cause) {
-        super(message, cause);
-    }
+public class TextFinder {
 }
