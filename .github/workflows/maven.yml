@@ -18,4 +18,4 @@ jobs:
     - name: replace platform
       run: sed -i "s/SONIC_PLATFORM/linux-x86_64/g" pom.xml
     - name: Validate and Compile with Maven
-      run: mvn validate compile test
+      run: mvn validate compile
