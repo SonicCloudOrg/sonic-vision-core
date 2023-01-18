@@ -142,25 +142,25 @@
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>ffmpeg</artifactId>
-            <version>5.0-1.5.7</version>
+            <version>5.1.2-1.5.8</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
-            <version>1.5.7</version>
+            <version>1.5.8</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>opencv</artifactId>
-            <version>4.5.5-1.5.7</version>
+            <version>4.6.0-1.5.8</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>openblas</artifactId>
-            <version>0.3.19-1.5.7</version>
+            <version>0.3.21-1.5.8</version>
             <classifier>${platform}</classifier>
         </dependency>
     </dependencies>
