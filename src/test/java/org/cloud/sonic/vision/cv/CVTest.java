@@ -15,21 +15,21 @@ public class CVTest {
     public void testSift() throws Exception {
         SIFTFinder siftFinder = new SIFTFinder();
         FindResult findResult = siftFinder.getSIFTFindResult(tem, before, false);
-        Assert.assertTrue(findResult != null);
+        Assert.assertNotNull(findResult);
     }
 
     @Test
     public void testAkaze() {
         AKAZEFinder akazeFinder = new AKAZEFinder();
         FindResult findResult = akazeFinder.getAKAZEFindResult(tem, before, false);
-        Assert.assertTrue(findResult != null);
+        Assert.assertNotNull(findResult);
     }
 
     @Test
     public void testTem() throws Exception {
         TemMatcher temMatcher = new TemMatcher();
         FindResult findResult = temMatcher.getTemMatchResult(tem, before, false);
-        Assert.assertTrue(findResult != null);
+        Assert.assertNotNull(findResult);
     }
 
     @Test

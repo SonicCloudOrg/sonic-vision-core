@@ -97,8 +97,6 @@ jobs:
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
       - name: replace version
         run: sed -i "s/SONIC_VERSION/${{ steps.previoustag.outputs.tag }}/g" pom.xml
-      - name: replace platform
-        run: sed -i "s/SONIC_PLATFORM/${{ matrix.platform }}/g" pom.xml
       - name: Set up Maven Central Repo
         uses: actions/setup-java@v1
         with:
@@ -110,7 +108,7 @@ jobs:
       - name: Publish to Maven Central Repo
         uses: samuelmeuli/action-maven-publish@v1
         with:
-          maven_args: -Dmaven.test.skip=true
+          maven_args: "-Dmaven.test.skip=true -Dplatform=${{ matrix.platform }}"
           gpg_private_key: ${{ secrets.GPG_SECRET }}
           gpg_passphrase: ${{ secrets.GPG_PASSWORD }}
           nexus_username: ${{ secrets.OSSRH_USER }}
