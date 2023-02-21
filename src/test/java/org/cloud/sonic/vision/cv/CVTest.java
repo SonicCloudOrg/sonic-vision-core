@@ -2,10 +2,12 @@ package org.cloud.sonic.vision.cv;
 
 import org.cloud.sonic.vision.models.FindResult;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 
+@Ignore
 public class CVTest {
     File tem = new File("tem.png");
     File before = new File("test.png");

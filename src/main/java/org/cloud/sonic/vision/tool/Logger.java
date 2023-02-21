@@ -21,6 +21,9 @@ package org.cloud.sonic.vision.tool;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Logger
+ */
 public class Logger {
     private SimpleDateFormat formatter;
     private boolean isShowLog;
