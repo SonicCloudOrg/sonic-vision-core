@@ -9,10 +9,12 @@ import java.io.File;
 
 @Ignore
 public class CVTest {
-    File tem = new File("similarity_button.png");
-//    File before = new File("test.png");
-    File before = new File("similarity.png");
+//    File tem = new File("similarity_button.png");
+//    File before = new File("similarity.png");
     File s = new File("testS.png");
+    File tem = new File("tem.png");
+    File before = new File("test.png");
+
 
     @Test
     public void testSift() throws Exception {

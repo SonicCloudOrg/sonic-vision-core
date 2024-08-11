@@ -18,9 +18,10 @@
  */
 package org.cloud.sonic.vision.cv;
 
+
+import org.bytedeco.opencv.global.opencv_calib3d;
 import org.bytedeco.opencv.opencv_core.*;
 import org.bytedeco.opencv.opencv_core.DMatch;
-import org.bytedeco.opencv.opencv_core.KeyPoint;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Point;
 import org.bytedeco.opencv.opencv_core.Scalar;
@@ -28,12 +29,14 @@ import org.bytedeco.opencv.opencv_features2d.FlannBasedMatcher;
 import org.bytedeco.opencv.opencv_features2d.SIFT;
 import org.cloud.sonic.vision.models.FindResult;
 import org.cloud.sonic.vision.tool.Logger;
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.*;
+import org.cloud.sonic.vision.tool.Util;
 
 import java.io.File;
 import java.util.*;
+import java.util.Arrays;
 
+import static org.bytedeco.opencv.global.opencv_calib3d.CV_RANSAC;
+import static org.bytedeco.opencv.global.opencv_core.CV_8UC1;
 import static org.bytedeco.opencv.global.opencv_features2d.drawMatchesKnn;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imwrite;
@@ -117,8 +120,6 @@ public class SIFTFinder {
 
     public FindResult getSIFTFindResult(File temFile, File beforeFile, boolean isDelete) throws Exception {
 
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-
         Mat image01 = imread(beforeFile.getAbsolutePath());
         Mat image02 = imread(temFile.getAbsolutePath());
 
@@ -143,12 +144,9 @@ public class SIFTFinder {
         flannBasedMatcher.knnMatch(image11, image22, matchPoints, 2);
         logger.info(matchPoints.size() + " point from img");
 
-//        LinkedList<DMatch> goodMatchesList = new LinkedList<>();
-
         DMatchVectorVector goodMatches = new DMatchVectorVector();
-        LinkedList<org.opencv.core.Point> objectPoints = new LinkedList<>();
-        LinkedList<org.opencv.core.Point> scenePoints = new LinkedList<>();
-
+        LinkedList<Point2f> objectPoints = new LinkedList<>();
+        LinkedList<Point2f> scenePoints = new LinkedList<>();
 
         for (long i = 0; i < matchPoints.size(); i++) {
             if (matchPoints.get(i).size() >= 2) {
@@ -156,17 +154,14 @@ public class SIFTFinder {
                 DMatch match2 = matchPoints.get(i).get(1);
 
                 if (match1.distance() <= 0.6 * match2.distance()) {
-                    Point2f templatePointf = originalDescriptors.get(match1.queryIdx()).pt();
-                    objectPoints.addLast(new org.opencv.core.Point(templatePointf.x(),templatePointf.y()));
-
-                    Point2f originalPointf = originalDescriptors.get(match1.trainIdx()).pt();
-                    objectPoints.addLast(new org.opencv.core.Point(originalPointf.x(),originalPointf.y()));
-                    objectPoints.addLast(new org.opencv.core.Point(templatePointf.x(),originalPointf.y()));
-
+                    scenePoints.addLast(originalDescriptors.get(match1.queryIdx()).pt());
+                    objectPoints.addLast(templateDescriptors.get(match2.trainIdx()).pt());
                     goodMatches.push_back(matchPoints.get(i));
                 }
             }
         }
+
+        Mat mask = new Mat(objectPoints.size(), 1, CV_8UC1);
 
         int resultX;
         int resultY;
@@ -177,38 +172,51 @@ public class SIFTFinder {
             logger.info("The template diagram is successfully matched in the original image!");
             drawMatchesKnn(image01, originalDescriptors, image02, templateDescriptors, goodMatches, result);
 
-            MatOfPoint2f objMatOfPoint2f = new MatOfPoint2f();
-            objMatOfPoint2f.fromList(objectPoints);
-            MatOfPoint2f scnMatOfPoint2f = new MatOfPoint2f();
-            scnMatOfPoint2f.fromList(scenePoints);
-            //使用 findHomography 寻找匹配上的关键点的变换
-            org.opencv.core.Mat homography = Calib3d.findHomography(objMatOfPoint2f, scnMatOfPoint2f, Calib3d.RANSAC, 3);
+            mask.resize(objectPoints.size());
 
-            /**
-             * 透视变换(Perspective Transformation)是将图片投影到一个新的视平面(Viewing Plane)，也称作投影映射(Projective Mapping)。
-             */
-            org.opencv.core.Mat templateCorners = new org.opencv.core.Mat(4, 1, CvType.CV_32FC2);
-            org.opencv.core.Mat templateTransformResult = new org.opencv.core.Mat(4, 1, CvType.CV_32FC2);
-            templateCorners.put(0, 0, 0, 0);
-            templateCorners.put(1, 0, image1.cols(), 0);
-            templateCorners.put(2, 0, image1.cols(), image1.rows());
-            templateCorners.put(3, 0, 0, image1.rows());
-            //使用 perspectiveTransform 将模板图进行透视变以矫正图象得到标准图片
-            Core.perspectiveTransform(templateCorners, templateTransformResult, homography);
+            Mat objMat = Util.pointToMat(objectPoints);
+            Mat scnMat = Util.pointToMat(scenePoints);
 
-            //矩形四个顶点
-            double[] pointA = templateTransformResult.get(0, 0);
-            double[] pointB = templateTransformResult.get(1, 0);
-            double[] pointC = templateTransformResult.get(2, 0);
-            double[] pointD = templateTransformResult.get(3, 0);
+            Mat H = opencv_calib3d.findHomography(objMat, scnMat, mask,CV_RANSAC, 5);
+
+            if (H.empty()) {
+                return null;
+            }
+
+            double[] h = (double[]) H.createIndexer(false).array();
+            double[] srcCorners = { 0, 0,  image1.cols(), image1.rows(),  image1.cols(), 0 };
+            double[] dstCorners = new double[srcCorners.length];
+
+            for(int i = 0; i < srcCorners.length/2; i++) {
+                double x = srcCorners[2*i], y = srcCorners[2*i + 1];
+                double Z = 1/(h[6]*x + h[7]*y + h[8]);
+                double X = (h[0]*x + h[1]*y + h[2])*Z;
+                double Y = (h[3]*x + h[4]*y + h[5])*Z;
+                dstCorners[2*i    ] = X;
+                dstCorners[2*i + 1] = Y;
+            }
+            double top = Double.MAX_VALUE;
+            double left = Double.MAX_VALUE;
+            double bottom = Double.MIN_VALUE;
+            double right = Double.MIN_VALUE;
+
+            for (int i = 0; i < dstCorners.length / 2; i++) {
+                double x = dstCorners[2 * i];
+                double y = dstCorners[2 * i + 1];
+
+                if (x < left) left = x;
+                if (x > right) right = x;
+                if (y < top) top = y;
+                if (y > bottom) bottom = y;
+            }
 
             //指定取得数组子集的范围
-            int rowStart = (int) pointA[1];
-            int rowEnd = (int) pointC[1];
-            int colStart = (int) pointD[0];
-            int colEnd = (int) pointB[0];
-            resultX = (rowStart+rowEnd)/2;
-            resultY = (colStart+colEnd)/2;
+            int rowStart = (int) left;
+            int rowEnd = (int) right;
+            int colStart = (int) top;
+            int colEnd = (int) bottom;
+            resultX = (rowStart + rowEnd) / 2;
+            resultY = (colStart + colEnd) / 2;
         } else {
             temFile.delete();
             beforeFile.delete();
